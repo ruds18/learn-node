@@ -34,30 +34,66 @@ const url = require('url');
 ///////////////////////////////////////////////////////////
 // SERVER
 
+const replaceTemplate = (temp, product) =>{
+    let output = temp.replace(/{%productName%}/g,product.productName );
+    output = output.replace(/{%Id%}/g,product.id );
+    output = output.replace(/{%Image%}/g,product.image );
+    output = output.replace(/{%Price%}/g,product.price );
+    output = output.replace(/{%From%}/g,product.from );
+    output = output.replace(/{%ProductNutrientsName%}/g,product.nutrients );
+    output = output.replace(/{%Quantity%}/g,product.quantity );
+    output = output.replace(/{%productDiscription%}/g,product.discription );
+
+    if(!product.organic) output = output.replace(/{%NotOrganic%}/g, 'not-organic');
+
+    return output;
+}
+
 //SYNC
-// const data = fs.readFile('./dev-data/data.json', 'utf-8', (err, data)=>{console.log(data)});
-// const dataObj = JSON.parse(data);
+const data = fs.readFileSync('./dev-data/data.json', 'utf-8', (err, data)=>{console.log(data)});
+const dataObj = JSON.parse(data);
+const tempOverview  =fs.readFileSync('./templates/overview.html', 'utf-8');
+const tempCard = fs.readFileSync('./templates/template-card.html', 'utf-8');
+const tempProduct = fs.readFileSync('./templates/product.html' , 'utf-8');
 
 
 // ASYNC
  http.createServer(function(req,res) {
     
-    const pathName = req.url;
+   
+    const {query, pathname} = url.parse(req.url, true);
+   
+    console.log(url.parse(req.url, true));
+ 
+    
+    // Over-view Page
+    if( pathname == '/' || pathname == '/overview'){
+        res.writeHead(200, {'Content-type' : 'text/html'})
 
-    if( pathName == '/' || pathName == '/overview'){
-       return res.end("Overview Page");
-    }else if(pathName == '/about'){
-        res.end("About Page");
-    }else if(pathName == '/api'){
-        //This is read every time when the user makes the call therefore it should be sync
-        fs.readFile('./dev-data/data.json' , 'utf-8' , (err, data)=>{
-            const productData = JSON.parse(data);
-            res.writeHead(200, {'Content-type': 'application/json'})
-            res.end(data);
-        });
-        // res.writeHead(200, {'Content-type': 'application/json'});
-        // res.end(data);
+       const cardHtml = dataObj.map(elememt => replaceTemplate(tempCard,elememt)).join('');
+       const output = tempOverview.replace('{%ProductCards%}', cardHtml)
+   
+       return res.end(output);
+
+    // Products
+    }else if(pathname == '/product'){
+           
+    console.log("Inside call")
+    console.log(pathname);
+    console.log(query);
+        const product = dataObj[query.id];
+        res.writeHead(200, {'Content-type': 'text/html'});
+        // console.log(query);
+        const output = replaceTemplate(tempProduct, product);
+        res.end(output);
+
+    // API
+    }else if(pathname == '/api'){
+        res.writeHead(200, {'Content-type': 'application/json'});
+        res.end(data);
     }
+
+    // Wrong URL
     else{
         res.end("Url Enetered does not exists");
     }
