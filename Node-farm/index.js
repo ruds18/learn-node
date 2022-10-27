@@ -42,7 +42,7 @@ const replaceTemplate = (temp, product) =>{
     output = output.replace(/{%From%}/g,product.from );
     output = output.replace(/{%ProductNutrientsName%}/g,product.nutrients );
     output = output.replace(/{%Quantity%}/g,product.quantity );
-    output = output.replace(/{%productDiscription%}/g,product.discription );
+    output = output.replace(/{%productDiscription%}/g,product.description );
 
     if(!product.organic) output = output.replace(/{%NotOrganic%}/g, 'not-organic');
 
@@ -63,7 +63,6 @@ const tempProduct = fs.readFileSync('./templates/product.html' , 'utf-8');
    
     const {query, pathname} = url.parse(req.url, true);
    
-    console.log(url.parse(req.url, true));
  
     
     // Over-view Page
@@ -77,10 +76,7 @@ const tempProduct = fs.readFileSync('./templates/product.html' , 'utf-8');
 
     // Products
     }else if(pathname == '/product'){
-           
-    console.log("Inside call")
-    console.log(pathname);
-    console.log(query);
+
         const product = dataObj[query.id];
         res.writeHead(200, {'Content-type': 'text/html'});
         // console.log(query);
