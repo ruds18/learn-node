@@ -30,6 +30,66 @@ app.post('/api/v1/tours', (req,res)=>{
   })
 });
 
+app.get('/api/v1/tours/:id', (req,res)=>{
+    
+    const id = req.params.id*1;
+    const tour = tours.find(el=> el.id == id);
+
+     if(!tour){
+      return res.status(404).json({
+        'status': 'failed',
+         'message' : 'Invalid Id'
+      })
+   }
+
+    res.json({
+        status: 'success',
+        data: {
+            tour
+        }
+      })
+  })
+
+  app.patch('/api/v1/tours/:id', (req,res)=>{
+    const id = req.params.id*1;
+    
+
+    if(id > tours.length){
+        return res.status(404).json({
+            'status': 'failed',
+             'message' : 'Invalid Id'
+          })
+    }
+
+    res.status(200).json({
+        'status' : "success",
+        data:{
+           tour: "zfdg"
+        }
+    })
+  })
+
+  app.delete('/api/v1/tours/:id', (req,res)=>{
+    // convert id in url into strings
+    const id = req.params.id*1;
+    // Empty Id
+    if(id > tours.length){
+        res.status(404).json({
+            "status" : "failed",
+            "message" : "Invalid Id"
+        })
+    }
+   
+   res.status(204).json({
+    "status" : "successful",
+    data: null
+  
+   })
+
+  })
+
+  
+
 const port =3000;
 app.listen(port , ()=>{
     console.log(`App running on port ${port}`);
