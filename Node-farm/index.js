@@ -3,6 +3,8 @@ const http = require('http');
 const { parse } = require('path');
 const url = require('url');
 
+const slugify  = require ('slugify');
+
 ///////////////////////////////////////////////////////////
 // FILES
 
@@ -56,6 +58,8 @@ const tempOverview  =fs.readFileSync('./templates/overview.html', 'utf-8');
 const tempCard = fs.readFileSync('./templates/template-card.html', 'utf-8');
 const tempProduct = fs.readFileSync('./templates/product.html' , 'utf-8');
 
+const slugs = dataObj.map(el=> slugify(el.productName, {lower:true}));
+console.log(slugs);
 
 // ASYNC
  http.createServer(function(req,res) {
