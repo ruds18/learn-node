@@ -3,15 +3,26 @@ const app = express();
 const fs = require('fs');
 app.use(express.json());
 
+//MIDDLEWARE
+app.use((req,res,next)=>{
+  console.log("Hello from the middleware!");
+  next();
+})
+
+app.use((req,res,next)=>{
+  req.responseTime = new Date().toISOString();
+  next();
+})
+
+
 const tours = JSON.parse(fs.readFileSync('./dev-data/data/tours-simple.json' ));
-
-
 ///////////////////////////////////////////////////
 // ROUTES Definition
 
 const getAllTours = (req,res)=>{
     res.json({
       status: 'success',
+      requestedAt : req.responseTime,
       results: tours.length,
       data: {
           tours:tours
