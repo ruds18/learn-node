@@ -10,7 +10,8 @@ mongoose.connect(DB, {
     useCreateIndex : true,
     useFindAndModify:false,
     useUnifiedTopology: true, 
-}).then(() =>{console.log("MongoDB connection successful!!")})
+}).then(() =>{console.log("MongoDB connection successful!!")}).catch((err)=>{console.log(err);})
+
 
 
 
